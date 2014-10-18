@@ -2,7 +2,7 @@
 - ether.base.js v0.1
 - Basic data structures and utilities to build ethereum tools & tutorials
 - http://ether.fund
-- (c) 2014 - J.R. Bédard - jrbedard.com
+- (c) 2014 J.R. Bédard (jrbedard.com)
 */
 
 // ether units

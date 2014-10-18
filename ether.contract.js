@@ -2,7 +2,7 @@
 - ether.contract.js v0.1
 - Contract Editor and Viewer for Ethereum
 - http://ether.fund/tool/contract
-- (c) 2014 - J.R. Bédard - jrbedard.com
+- (c) 2014 J.R. Bédard (jrbedard.com)
 */
 
 // todo: multiple settings per lang?
@@ -13,7 +13,10 @@ const EDITOR_SETTINGS = {
 	},
 	'serpent':{'name':"Serpent", 'mode':"ace/mode/python",
 	},
+	'solidity':{'name':"Solidity", 'mode':"ace/mode/c_pp",
+	},
 }
+
 
 const EDITOR_SCAFOLDS = {
 	'lll':{'code':"lll..."},
@@ -31,7 +34,7 @@ var editor = null;
 
 // from backend
 var gLang = "lll";
-var gPref = {'theme':"ace/theme/github"}; // user preferences
+var gPref = {'theme':"ace/theme/textmate"}; // user preferences
 
 
 
@@ -90,8 +93,11 @@ function setEditor() {
 	$("#language").text(language['name']);
 	$("#language").attr('href', language['specs']);
 	$("#language").attr('title', language['desc']);
-	$('#language').tooltip('destroy');
-	$("#language").tooltip({});
+	
+	// first line of the right editor
+	$('#contractType >').tooltip('destroy');
+	$("#contractType >").tooltip({placement:'top'});
+	
 	
 	// mode
 	editor.getSession().setMode(settings['mode']);
@@ -133,14 +139,19 @@ $("#dropdown-language a").click(function() {
 });
 
 
-
-
 function goToLine(lineNumber) {
 	editor.gotoLine(lineNumber);
 }
 function getLineCount() {
 	return editor.session.getLength();
 }
+
+
+// Editor tabs
+$('#contractTabs a').click(function (e) {
+	e.preventDefault()
+	$(this).tab('show')
+})
 
 
 
