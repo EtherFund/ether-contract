@@ -28,17 +28,17 @@ const ETH_FEES = {
 
 // contract languages
 const ETH_LANGUAGES = {
-	'lll':{'name':"LLL", 'syntax':"Lisp",
-		'specs':"https://github.com/ethereum/cpp-ethereum/wiki/LLL",
+	'LLL':{'name':"LLL", 'syntax':"Lisp", 'ext':"lisp",
 		'desc':"LLL is the Ethereum Low-level Lisp-like Language.",
+		'specs':"https://github.com/ethereum/cpp-ethereum/wiki/LLL-PoC-6",
 	},
-	'mutan':{'name':"Mutan", 'syntax':"C++",
-		'specs':"https://github.com/ethereum/go-ethereum/wiki/Mutan",
+	'Mutan':{'name':"Mutan", 'syntax':"C++", 'ext':"c",
 		'desc':"Mutan is a C-Like language for the Ethereum project.",
+		'specs':"https://github.com/ethereum/go-ethereum/wiki/Mutan",
 	},
-	'serpent':{'name':"Serpent", 'syntax':"Python",
-		'specs':"https://github.com/ethereum/wiki/wiki/Serpent",
+	'Serpent':{'name':"Serpent", 'syntax':"Python", 'ext':"se",
 		'desc':"Serpent is designed to be very similar to Python.",
+		'specs':"https://github.com/ethereum/wiki/wiki/Serpent",
 	},
 };
 
@@ -268,4 +268,17 @@ $.fn.selectRange = function(start, end) {
         }
     });
 };
+
+
+String.prototype.escapeSpecialChars = function() {
+    return this.replace(/\\n/g, "\\n")
+               .replace(/\\'/g, "\\'")
+               .replace(/\\"/g, '\\"')
+               .replace(/\\&/g, "\\&")
+               .replace(/\\r/g, "\\r")
+               .replace(/\\t/g, "\\t")
+               .replace(/\\b/g, "\\b")
+               .replace(/\\f/g, "\\f");
+};
+
 

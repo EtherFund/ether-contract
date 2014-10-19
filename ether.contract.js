@@ -7,21 +7,12 @@
 
 // todo: multiple settings per lang?
 const EDITOR_SETTINGS = {
-	'lll':{'name':"LLL", 'mode':"ace/mode/lisp",
+	'LLL':{'name':"LLL", 'mode':"ace/mode/lisp",
 	},
-	'mutan':{'name':"Mutan", 'mode':"ace/mode/c_cpp",
+	'Mutan':{'name':"Mutan", 'mode':"ace/mode/c_cpp",
 	},
-	'serpent':{'name':"Serpent", 'mode':"ace/mode/python",
+	'Serpent':{'name':"Serpent", 'mode':"ace/mode/python",
 	},
-	'solidity':{'name':"Solidity", 'mode':"ace/mode/c_pp",
-	},
-}
-
-
-const EDITOR_SCAFOLDS = {
-	'lll':{'code':"lll..."},
-	'serpent':{'code':"init:\n\ncode:\n"},
-	'mutan':{'code':"mutan..."},
 }
 
 const ICON_STATES = {
@@ -30,12 +21,13 @@ const ICON_STATES = {
 	'error':{'icon':"file-o",'color':""},
 }
 
+
 var editor = null;
 
 // from backend
-var gLang = "lll";
-var gPref = {'theme':"ace/theme/textmate"}; // user preferences
-
+var gObj = null; // contract
+var gState = null; // contract state : new,edit,view,etc
+var gPref = null; // user preferences
 
 
 // Init
@@ -51,7 +43,7 @@ $(function () {
 	// code changed
 	editor.getSession().on('change', function(e) {
     	// e.type, etc
-		console.log(e);
+		//console.log(e);
 		setIconState('typing');
 	});
 	
@@ -84,12 +76,11 @@ $(function () {
 function setEditor() {
 	$("#editor").hide();
 	
-	var language = ETH_LANGUAGES[gLang]
-	var settings = EDITOR_SETTINGS[gLang];
+	var lang = gObj['language']
+	var language = ETH_LANGUAGES[lang]
+	var settings = EDITOR_SETTINGS[lang];
 	
-	// language btn
-	$("#btn-language").html(language['name'] + " <span class='caret'></span>");
-	
+	// language label
 	$("#language").text(language['name']);
 	$("#language").attr('href', language['specs']);
 	$("#language").attr('title', language['desc']);
@@ -98,61 +89,124 @@ function setEditor() {
 	$('#contractType >').tooltip('destroy');
 	$("#contractType >").tooltip({placement:'top'});
 	
-	
 	// mode
 	editor.getSession().setMode(settings['mode']);
-	editor.setTheme(gPref['theme']);
 	
-	var scafold = EDITOR_SCAFOLDS[gLang];
-	if(true) {
-		editor.setValue(scafold['code']);
-	}
-
+	// preferences
+	setPreferences();
+	
 	if(false) { // viewer
 		editor.setReadOnly(true); 
 	}
-
+	
+	loadContract();
+	
 	// show
 	$("#editor").show();
 	$("#editor").focus();
-	editor.focus();	
+	editor.focus();
+	
+	goToLine( getLineCount(), 0);
 }
 
 
 function setPreferences() {
+	if(gPref) {
+		editor.setTheme(gPref['theme']);
+	} else {
+		editor.setTheme({'theme':"ace/theme/textmate"});
+	}
+	/*
 	editor.getSession().setTabSize(4);
 	editor.getSession().setUseSoftTabs(true);
-	document.getElementById('editor').style.fontSize='12px';
+	$('#editor').attr("style", "fontSize=12px;");
 	editor.getSession().setUseWrapMode(true);
 	editor.setHighlightActiveLine(false);
 	editor.setShowPrintMargin(false);
-	editor.setReadOnly(true);
+	*/
 }
 
 
-// changed language
-$("#dropdown-language a").click(function() {
-	gLang = $(this).attr('data-id');
-	//$(this).parent().addClass('active');
-	setEditor();
-	return true;
+function loadContract() {
+	
+	if(gObj['code']) {
+		editor.setValue(gObj['code']);
+	}
+	
+	// Data
+	if(gObj['data']) {
+		//$("#data").text();
+	} else {
+		$("#data").text("No Data module yet.");
+	}
+	
+	// Messages
+	if(gObj['messages']) {
+		//$("#data").text();
+	} else {
+		$("#messages").text("No Messages module yet.");
+	}
+	
+	// Debug
+	if(gObj['debug']) {
+		//$("#data").text();
+	} else {
+		$("#debug").text("No Debug/Simulation module yet.");
+	}
+}
+
+
+
+function saveContract() {
+	// according to gState
+	
+	// todo: populate hidden form
+}
+
+
+// download
+function downloadContract() {
+	$("#saveName").attr('value', gObj['name']);
+	$("#saveLang").attr('value', gObj['language']);
+	
+	var code = editor.getValue().escapeSpecialChars();
+	//console.log(code);
+	
+	$("#saveCode").attr('value', code);
+	
+	//
+	
+	$("#contractForm").attr('action', '/contract/download');
+	$("#contractForm").submit();
+}
+
+
+
+
+// Editor tabs
+$('#contractTabs a').click(function(e) {
+	e.preventDefault();
+	$(this).tab('show');
 });
 
 
-function goToLine(lineNumber) {
-	editor.gotoLine(lineNumber);
+// Download button
+$("#downloadBtn").click(function(e) {
+	e.preventDefault();
+	downloadContract();
+});
+
+
+
+
+// Editor State
+
+function goToLine(line, col) {
+	editor.gotoLine(line, col, false);
 }
 function getLineCount() {
 	return editor.session.getLength();
 }
-
-
-// Editor tabs
-$('#contractTabs a').click(function (e) {
-	e.preventDefault()
-	$(this).tab('show')
-})
-
 
 
 function setIconState(state) {
