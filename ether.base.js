@@ -28,11 +28,11 @@ const ETH_FEES = {
 
 // contract languages
 const ETH_LANGUAGES = {
-	'LLL':{'name':"LLL", 'syntax':"Lisp", 'ext':"lisp",
+	'LLL':{'name':"LLL", 'syntax':"Lisp", 'ext':"lll",
 		'desc':"LLL is the Ethereum Low-level Lisp-like Language.",
 		'specs':"https://github.com/ethereum/cpp-ethereum/wiki/LLL-PoC-6",
 	},
-	'Mutan':{'name':"Mutan", 'syntax':"C++", 'ext':"c",
+	'Mutan':{'name':"Mutan", 'syntax':"C++", 'ext':"mut",
 		'desc':"Mutan is a C-Like language for the Ethereum project.",
 		'specs':"https://github.com/ethereum/go-ethereum/wiki/Mutan",
 	},
