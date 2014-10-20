@@ -40,6 +40,10 @@ const ETH_LANGUAGES = {
 		'desc':"Serpent is designed to be very similar to Python.",
 		'specs':"https://github.com/ethereum/wiki/wiki/Serpent",
 	},
+	'Solidity':{'name':"Solidity", 'syntax':"C++", 'ext':"so",
+		'desc':".",
+		'specs':"",
+	},
 };
 
 
@@ -238,6 +242,7 @@ $(".shareLink").click(function() {
 
 // get params from URL hash
 function getHashParams() {
+	if(!document.location.hash) { return null; }
 	var hashParams = {};
 	var e,
 	    a = /\+/g, // Regex for replacing addition symbol with a space

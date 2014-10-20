@@ -13,6 +13,8 @@ const EDITOR_SETTINGS = {
 	},
 	'Serpent':{'name':"Serpent", 'mode':"ace/mode/python",
 	},
+	'Solidity':{'name':"Solidity", 'mode':"ace/mode/c_cpp",
+	},
 }
 
 const ICON_STATES = {
@@ -95,8 +97,11 @@ function setEditor() {
 	// preferences
 	setPreferences();
 	
-	if(false) { // viewer
-		editor.setReadOnly(true); 
+	//console.log(gState);
+	if(gState['name'] == 'view') { // viewer
+		editor.setReadOnly(true);
+	} else {
+		$("#editBtn").addClass('active');
 	}
 	
 	loadContract();
@@ -106,7 +111,7 @@ function setEditor() {
 	$("#editor").focus();
 	editor.focus();
 	
-	goToLine( getLineCount(), 0);
+	loadParameters(); // hash
 }
 
 
@@ -156,6 +161,23 @@ function loadContract() {
 }
 
 
+// load parameters from hash
+function loadParameters() {
+	var params = getHashParams();
+	if(params) {
+		if(params['l']) {
+			editor.setHighlightActiveLine(true); // ?
+			goToLine(params['l']);
+		}
+	} else {
+		// else, from DB?
+		
+		goToLine( getLineCount(), 0);
+	}
+}
+
+
+
 
 function saveContract() {
 	// according to gState
@@ -181,6 +203,20 @@ function downloadContract() {
 }
 
 
+// edit contract
+function editContract() {
+	
+	$("#editBtn").addClass('active');
+	editor.setReadOnly(false); 
+	
+	//$("#contractHistoryList").append("<li>Edited by </li>");
+}
+
+// for contract
+function forkContract() {
+	// coming soon
+}
+
 
 
 // Editor tabs
@@ -195,6 +231,20 @@ $("#downloadBtn").click(function(e) {
 	e.preventDefault();
 	downloadContract();
 });
+
+// Edit button
+$("#editBtn").click(function(e) {
+	e.preventDefault();
+	editContract();
+});
+
+// Fork button
+$("#forkBtn").click(function(e) {
+	e.preventDefault();
+	$("this").tooltip({});
+	//editContract();
+});
+
 
 
 
