@@ -17,11 +17,17 @@ const EDITOR_SETTINGS = {
 	},
 }
 
+// themes
+const EDITOR_THEMES = ["ambiance","chaos","chrome","clouds","cloud_midnight","cobalt","crimson_editor","dawn","dreamweaver","eclipse","github","idle_fingers","katzenmilch","kr_theme","kuroir","merbivore","merbivore_soft","mono_industrial","monokai","pastel_on_dark","solarized_dark","solarized_light","terminal","textmate","tomorrow","tomorrow_night","tomorrow_night_blue","tomorrow_night_bright","tomorrow_night_eighties","twilight","vibrant_ink","xcode"];
+
+
 const ICON_STATES = {
 	'default':{'icon':"file-o",'color':""},
 	'typing':{'icon':"file-o",'color':""},
 	'error':{'icon':"file-o",'color':""},
 }
+
+
 
 
 var editor = null;
@@ -119,18 +125,29 @@ function setEditor() {
 
 function setPreferences() {
 	if(gPref) {
-		editor.setTheme(gPref['theme']);
+		editor.setTheme("ace/theme/"+gPref['theme']);
 	} else {
 		editor.setTheme({'theme':"ace/theme/textmate"});
 	}
-	/*
+	
+	$('#editor').attr("style", "fontSize=10px;");
+	
 	editor.getSession().setTabSize(4);
 	editor.getSession().setUseSoftTabs(true);
-	$('#editor').attr("style", "fontSize=12px;");
 	editor.getSession().setUseWrapMode(true);
-	editor.setHighlightActiveLine(false);
+	editor.setHighlightActiveLine(true);
 	editor.setShowPrintMargin(false);
-	*/
+	
+	//editor.getSession().setShowFoldWidget(true);
+	//editor.getSession().showInvisibles(true);
+	
+	
+	for(i=0; i < EDITOR_THEMES.length; ++i) {
+		var theme = EDITOR_THEMES[i];
+		$("ul#dropdown-editor-theme").append("<li><a data-id='"+theme+"' href='#'>"+theme+"</a></li>");
+	}
+	$("#btnTheme").html(gPref['theme'] + " <span class='caret'></span>");
+	
 }
 
 
@@ -240,9 +257,31 @@ $("#editBtn").click(function(e) {
 // Fork button
 $("#forkBtn").click(function(e) {
 	e.preventDefault();
-	$("this").tooltip({});
-	//editContract();
+	if(!gUser || gUser=="AnonymousUser") {
+		$("#loginModal .modal-title").html("<i class='fa fa-code-fork'></i> Forking Contract");
+		$("#loginModal #dothat").html("fork <b>"+gObj['name']+"</b>"); 
+		$("#loginModal").modal({});
+	} else {
+		
+	}
 });
+
+// Save Button
+$("#saveBtn, #editDesc").click(function(e) {
+	e.preventDefault();
+	if(!gUser || gUser=="AnonymousUser") {
+		$("#loginModal .modal-title").html("<i class='fa fa-save'></i> Save Contract");
+		$("#loginModal #dothat").html("save <b>"+gObj['name']+"</b>"); 
+		$("#loginModal").modal({});
+	} else {
+		
+	}
+});
+
+
+
+
+
 
 
 // contract meta dialog
@@ -269,10 +308,15 @@ $("#savePrefBtn").click(function(e) {
 });
 
 
-
-
-
-
+// theme preference selected
+$("ul#dropdown-editor-theme li a").click(function(e) {
+	e.preventDefault();
+	var theme = $(this).attr('data-id');
+	console.log(theme);
+	$("#btnTheme").html(theme+" <span class='caret'></span>");
+	
+	editor.setTheme({'theme':"ace/theme/"+theme});
+});
 
 
 
