@@ -72,6 +72,8 @@ $(function () {
 		readOnly: true // false if this command should not apply in readOnly mode
 	});
 
+	
+	$("#editorLoader").remove();
 });
 
 
@@ -191,12 +193,9 @@ function downloadContract() {
 	$("#saveName").attr('value', gObj['name']);
 	$("#saveLang").attr('value', gObj['language']);
 	
-	var code = editor.getValue().escapeSpecialChars();
-	//console.log(code);
-	
+	var code = editor.getValue();
+	code = encodeURIComponent(code);
 	$("#saveCode").attr('value', code);
-	
-	//
 	
 	$("#contractForm").attr('action', '/contract/download');
 	$("#contractForm").submit();
@@ -209,7 +208,7 @@ function editContract() {
 	$("#editBtn").addClass('active');
 	editor.setReadOnly(false); 
 	
-	//$("#contractHistoryList").append("<li>Edited by </li>");
+	//$("#contractHistoryList").append("<li>Updated by '' <abbr></abbr></li>");
 }
 
 // for contract
@@ -244,6 +243,39 @@ $("#forkBtn").click(function(e) {
 	$("this").tooltip({});
 	//editContract();
 });
+
+
+// contract meta dialog
+$("#metaBtn").click(function(e) {
+	e.preventDefault();
+	$("#contractModal").modal({});
+});
+
+$("#saveMetaBtn").click(function(e) {
+	e.preventDefault();
+	$("#contractModal").modal('hide');
+});
+
+
+// editor preference dialog
+$("#prefBtn").click(function(e) {
+	e.preventDefault();
+	$("#preferenceModal").modal({});
+});
+
+$("#savePrefBtn").click(function(e) {
+	e.preventDefault();
+	$("#preferenceModal").modal('hide');
+});
+
+
+
+
+
+
+
+
+
 
 
 
