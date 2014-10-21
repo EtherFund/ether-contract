@@ -20,7 +20,7 @@ const EDITOR_SETTINGS = {
 // themes
 const EDITOR_THEMES = ["ambiance","chaos","chrome","clouds","clouds_midnight","cobalt","crimson_editor","dawn","dreamweaver","eclipse","github","idle_fingers","katzenmilch","kr_theme","kuroir","merbivore","merbivore_soft","mono_industrial","monokai","pastel_on_dark","solarized_dark","solarized_light","terminal","textmate","tomorrow","tomorrow_night","tomorrow_night_blue","tomorrow_night_bright","tomorrow_night_eighties","twilight","vibrant_ink","xcode"];
 
-const EDITOR_DEFAULT = {"theme":"textmate", "fontSize":"12", "tabSize":"4", "softTabs":1, "wrapMode":1, "highlightActiveLine":1, "showPrintMargin":0};
+const EDITOR_DEFAULT = {"theme":"idle_fingers", "fontSize":"12", "tabSize":"4", "softTabs":1, "wrapMode":1, "highlightActiveLine":1, "showPrintMargin":0};
 
 const ICON_STATES = {
 	'default':{'icon':"file-o",'color':""},
@@ -110,17 +110,7 @@ function setEditor() {
 	// preferences
 	setPreferences();
 	
-	//console.log(gState);
-	if(gState['name'] == 'view') { // viewer
-		//editor.setReadOnly(true);
-	} else {
-	}
-	if(isUserAnon()) { // Anonymous	
-	}
-	
 	loadContract();
-	
-	console.log('test');
 	
 	// show
 	$("#editor").show();
@@ -129,8 +119,14 @@ function setEditor() {
 	
 	loadParameters(); // hash
 	
-	etherGrowl("Welcome! feel free to edit the contract", "info", 'fa-file-text-o');
-	// todo, sign-up growls...
+	// Anon
+	if(isUserAnon()) { 
+		etherGrowl("Welcome! feel free to edit the contract", "info", 'fa-file-text-o');
+		// todo, sign-up growls...
+	} else {
+		// is my doc?
+		// else
+	}
 }
 
 
@@ -170,14 +166,13 @@ function loadParameters() {
 		if(params['l']) {
 			editor.setHighlightActiveLine(true); // override..
 			goToLine(params['l']);
+			etherGrowl("The line "+params['l']+" is selected", "info", 'fa-indent');
 		}
 	} else {
 		// else, from DB?
 		goToLine( getLineCount(), 0);
 	}
 }
-
-
 
 
 
@@ -254,6 +249,7 @@ function saveContract() {
 // Fork Contract
 function forkContract() {
 	
+	etherGrowl("Forking is not implemented yet!", "warning", 'fa-code-fork');
 }
 
 
@@ -267,7 +263,7 @@ $("#metaBtn, #editDesc").click(function(e) {
 	e.preventDefault();
 	$("#contractModal #contractName").val(gObj['name']);
 	$("#contractModal #contractDesc").val(gObj['desc']);
-	//todo: btn-language, category
+	//todo: btn-language, category, privacy
 	
 	$("#saveMetaBtn").button("reset");
 	$("#contractModal").modal({});
@@ -285,6 +281,8 @@ $("#saveMetaBtn").click(function(e) {
   		$("h1 #contractName").text(gObj['name']);
 		$("#contractTabContent #contractDesc").text(gObj['desc']);
 		$("#contractModal").modal('hide');
+		// todo: language, category, privacy
+		// todo: change slug in url if different than new slug
 		etherGrowl("Saved '<b>"+gObj['name']+"</b>'", "success", 'fa-save');
 		
 	}, function(data) {
@@ -303,9 +301,10 @@ $("#saveMetaBtn").click(function(e) {
 $("#prefBtn").click(function(e) {
 	e.preventDefault();
 	
+	$("ul#dropdownThemes li").remove();
 	for(i=0; i < EDITOR_THEMES.length; ++i) {
 		var theme = EDITOR_THEMES[i];
-		$("ul#dropdownThemes").append("<li><a data-id='"+theme+"' href='#'>"+theme+"</a></li>");
+		$("ul#dropdownThemes").append("<li class='"+(gPref['theme']==theme?'active':'')+"'><a data-id='"+theme+"' href='#'>"+theme+"</a></li>");
 	}
 	$("#prefModal #btnTheme").html(gPref['theme'] + " <span class='caret'></span>");
 	$("#prefModal #btnTheme").val(gPref['theme']);
