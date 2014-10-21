@@ -329,7 +329,7 @@ function etherParse(data) {
 
 
 // growl
-function etherGrowl(msg, type, icon) {
+function etherGrowl(msg, type, icon, hidden) {
 	var params = { message:msg };
 	if(icon) {
 		params['message'] = " "+msg
@@ -339,11 +339,12 @@ function etherGrowl(msg, type, icon) {
 	$.growl(params, 
 		{ type:type, allow_dismiss:false,
 		element:"#editorPanel", placement:{align:'left'},
-		offset:{x:15, y:-46}, padding:0,
+		offset:{x:0, y:-46}, padding:0,
 		animate: {
-		enter: 'animated flipInX',
-		exit: 'animated flipOutX'
-		}	
+			enter: 'animated flipInX',
+			exit: 'animated flipOutX'
+		},
+		onHidden: function() { if(hidden) { hidden(); } }
 	});
 }
 

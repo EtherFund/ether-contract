@@ -24,7 +24,7 @@ const EDITOR_DEFAULT = {"theme":"textmate", "fontSize":"12", "tabSize":"4", "sof
 
 const ICON_STATES = {
 	'default':{'icon':"file-o",'color':""},
-	'typing':{'icon':"file-o",'color':""},
+	'typing':{'icon':"file-text-o",'color':""},
 	'error':{'icon':"file-o",'color':""},
 };
 
@@ -53,7 +53,9 @@ $(function () {
 	editor.getSession().on('change', function(e) {
     	// e.type, etc
 		//console.log(e);
-		setIconState('typing');
+		if(true) {
+			setIconState('typing');
+		}
 	});
 	
 	// selected code
@@ -87,6 +89,8 @@ $(function () {
 function setEditor() {
 	$("#editor").hide();
 	
+	//if(!gObj)
+	
 	var lang = gObj['language']
 	var language = ETH_LANGUAGES[lang]
 	var settings = EDITOR_SETTINGS[lang];
@@ -100,10 +104,6 @@ function setEditor() {
 	$('#contractType >').tooltip('destroy');
 	$("#contractType >").tooltip({placement:'top'});
 	
-	if(isUserAnon()) { // Anonymous
-		
-	}
-	
 	// mode
 	editor.getSession().setMode(settings['mode']);
 	
@@ -114,10 +114,13 @@ function setEditor() {
 	if(gState['name'] == 'view') { // viewer
 		//editor.setReadOnly(true);
 	} else {
-		
+	}
+	if(isUserAnon()) { // Anonymous	
 	}
 	
 	loadContract();
+	
+	console.log('test');
 	
 	// show
 	$("#editor").show();
@@ -212,7 +215,7 @@ $("#forkBtn").click(function(e) {
 });
 
 // Save Button
-$("#saveBtn, #editDesc").click(function(e) {
+$("#saveBtn").click(function(e) {
 	e.preventDefault();
 	loginOrRegisterModal("<i class='fa fa-save'></i> Save Contract", "save<br><b>"+gObj['name']+"</b>", function() {
 		// save
@@ -236,6 +239,8 @@ function saveContract() {
 	if(isUserAnon()) { return; }
 	// according to gState
 	
+	gObj['code'] = editor.getValue()
+	
 	etherPost("/contract/save", gObj, function(data) {
 		etherGrowl("Saved '<b>"+gObj['name']+"</b>'", "success", 'fa-save');
 		
@@ -258,7 +263,7 @@ function forkContract() {
 // CONTRACT DIALOG
 
 // contract meta dialog
-$("#metaBtn").click(function(e) {
+$("#metaBtn, #editDesc").click(function(e) {
 	e.preventDefault();
 	$("#contractModal #contractName").val(gObj['name']);
 	$("#contractModal #contractDesc").val(gObj['desc']);
@@ -308,10 +313,10 @@ $("#prefBtn").click(function(e) {
 	$("#prefModal #tabSize").val(gPref['tabSize']);
 	
 	// checkboxes..
-	if(gPref['softTabs']) { $("#prefModal #softTabs").attr('checked', true); }
-	if(gPref['wrapMode']) { $("#prefModal #wrapMode").attr('checked', true); }
-	if(gPref['highlightActiveLine']) { $("#prefModal #highlightActiveLine").attr('checked', true); }
-	if(gPref['showPrintMargin']) { $("#prefModal #showPrintMargin").attr('checked', true); }
+	if(gPref['softTabs'] == "1") { $("#prefModal #softTabs").attr('checked', true); }
+	if(gPref['wrapMode'] == "1") { $("#prefModal #wrapMode").attr('checked', true); }
+	if(gPref['highlightActiveLine'] == "1") { $("#prefModal #highlightActiveLine").attr('checked', true); }
+	if(gPref['showPrintMargin'] == "1") { $("#prefModal #showPrintMargin").attr('checked', true); }
 	
 	$("#savePrefBtn").button("reset");
 	$("#prefModal").modal({});
@@ -339,16 +344,18 @@ $("#savePrefBtn").click(function(e) {
 	gPref['tabSize'] = $("#prefModal #tabSize").val();
 	
 	// checkboxes..
-	gPref['softTabs'] = $("#prefModal #softTabs").is(':checked') ? 1 : 0;
-	gPref['wrapMode'] = $("#prefModal #wrapMode").is(':checked') ? 1 : 0;
-	gPref['highlightActiveLine'] = $("#prefModal #highlightActiveLine").is(':checked') ? 1 : 0;
-	gPref['showPrintMargin'] = $("#prefModal #showPrintMargin").is(':checked') ? 1 : 0;
+	gPref['softTabs'] = $("#prefModal #softTabs").is(':checked') ? "1" : "0";
+	gPref['wrapMode'] = $("#prefModal #wrapMode").is(':checked') ? "1" : "0";
+	gPref['highlightActiveLine'] = $("#prefModal #highlightActiveLine").is(':checked') ? "1" : "0";
+	gPref['showPrintMargin'] = $("#prefModal #showPrintMargin").is(':checked') ? "1" : "0";
 	
 	// Anon
 	if(isUserAnon()) { 
 		$("#prefModal").modal('hide');
 		setPreferences();
-		etherGrowl("Saved Editor Preferences", "success", 'fa-save');
+		etherGrowl("Saved editor preferences temporarily", "success", 'fa-save', function() {
+			etherGrowl("<a href='/user/login/'>Log-in or Register</a> to save permanently", "info", 'fa-cog');
+		});
 		return;
 	}
 	
@@ -370,15 +377,15 @@ $("#savePrefBtn").click(function(e) {
 
 // Set preferences
 function setPreferences() {
-	//console.log(gPref);
+	console.log(gPref);
 	editor.setTheme("ace/theme/"+gPref['theme']);
 	document.getElementById('editor').style.fontSize=gPref['fontSize']+'px';
 	
 	editor.getSession().setTabSize(parseInt(gPref['tabSize']));
-	editor.getSession().setUseSoftTabs(gPref['softTabs'] == 1);
-	editor.getSession().setUseWrapMode(gPref['wrapMode'] == 1);
-	editor.setHighlightActiveLine(gPref['highlightActiveLine'] == 1);
-	editor.setShowPrintMargin(gPref['showPrintMargin'] == 1);
+	editor.getSession().setUseSoftTabs(gPref['softTabs'] == "1");
+	editor.getSession().setUseWrapMode(gPref['wrapMode'] == "1");
+	editor.setHighlightActiveLine(gPref['highlightActiveLine'] == "1");
+	editor.setShowPrintMargin(gPref['showPrintMargin'] == "1");
 	//editor.getSession().setShowFoldWidget(true);
 	//editor.getSession().showInvisibles(true);
 }
