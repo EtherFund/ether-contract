@@ -287,3 +287,66 @@ String.prototype.escapeSpecialChars = function() {
 };
 
 
+// not authentiated
+function isUserAnon() {
+	if(!gUser || (gUser && gUser=="AnonymousUser")) { 
+		return true;
+	} else {
+		return false;
+	}
+};
+
+
+
+// Ajax POST
+function etherPost(url, data, done, error) {
+	data.csrfmiddlewaretoken = gCsrfToken;
+	$.ajax({
+		type:'POST', cache:false, url: url, data: data,
+		beforeSend:function(xhr, settings) {
+		},
+	  	success:function(data) {
+			done();
+	  	},
+	  	error:function() {
+			error();
+	  	}
+	});
+};
+
+// Parse
+function etherParse(data) {
+	var json = null;
+	try {
+    	json = $.parseJSON(data);
+  	}
+  	catch(e) {
+    	console.log("error: "+e);
+		//etherGrowl()
+  	};
+	return json;
+};
+
+
+// growl
+function etherGrowl(msg, type) {
+	
+	$.growl({ message:msg }, 
+		{ type:type, allow_dismiss:false,
+		element:"#editorPanel", placement:{align:'left'},
+		offset:{x:15, y:-51}, padding:0,
+		animate: {
+		enter: 'animated flipInY',
+		exit: 'animated flipOutX'
+		}	
+	});
+}
+
+
+
+
+
+
+
+
+
