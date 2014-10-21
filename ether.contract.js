@@ -22,6 +22,12 @@ const EDITOR_THEMES = ["ambiance","chaos","chrome","clouds","clouds_midnight","c
 
 const EDITOR_DEFAULT = {"theme":"idle_fingers", "fontSize":"12", "tabSize":"4", "softTabs":1, "wrapMode":1, "highlightActiveLine":1, "showPrintMargin":0};
 
+const CONTRACT_PRIVACY = {
+	'public':{'html':"<i class='fa fa-globe'></i> Public", 'title':"Viewable by anyone."},
+	'unlisted':{'html':"<i class='fa fa-list-ul'></i> Unlisted", 'title':"Viewable by anyone but not listed anywhwere (secret URL)."},
+	'private':{'html':"<i class='fa fa-lock'></i> Private", 'title':"Viewable only by you."},
+};
+
 const ICON_STATES = {
 	'default':{'icon':"file-o",'color':""},
 	'typing':{'icon':"file-text-o",'color':""},
@@ -46,54 +52,26 @@ $(function () {
 	$("#editor").hide();
 	
 	editor = ace.edit("editor");
+	
+	setLanguage();
+	
+	setPrivacy();
+	
+	setPreferences();
+	
+	loadContract();
+	
 	setEditor();
 	
-	
-	// code changed
-	editor.getSession().on('change', function(e) {
-    	// e.type, etc
-		//console.log(e);
-		if(true) {
-			setIconState('typing');
-		}
-	});
-	
-	// selected code
-	editor.getSession().selection.on('changeSelection', function(e) {
-	});
-	
-	
-	// annotation changed
-	editor.getSession().on("changeAnnotation", function(){
-		var annot = editor.getSession().getAnnotations();
-		for(var key in annot) {
-			if(annot.hasOwnProperty(key)) {
-            	//console.log("[" + annot[key][0].row + " , " + annot[key][0].column + "] - \t" + annot[key][0].text);
-    		}
-		}
-	});
-	
-	// add command
-	editor.commands.addCommand({
-		name: 'myCommand',
-		bindKey: {win: 'Ctrl-M',  mac: 'Command-M'},
-		exec: function(editor) {
-		},
-		readOnly: true // false if this command should not apply in readOnly mode
-	});
-
 	$("#editorLoader").remove();
 });
 
 
-function setEditor() {
-	$("#editor").hide();
-	
-	//if(!gObj)
-	
-	var lang = gObj['language']
-	var language = ETH_LANGUAGES[lang]
-	var settings = EDITOR_SETTINGS[lang];
+
+// Set language
+function setLanguage() {
+	var lang = gObj['language'];
+	var language = ETH_LANGUAGES[lang];
 	
 	// language label
 	$("#language").text(language['name']);
@@ -104,29 +82,23 @@ function setEditor() {
 	$('#contractType >').tooltip('destroy');
 	$("#contractType >").tooltip({placement:'top'});
 	
+	// first tag: language label
+	$("#languageLabel").text(lang);
+	//$("#languageLabel").attr('href', 'test'); // todo
+	
+	var settings = EDITOR_SETTINGS[lang];
 	// mode
 	editor.getSession().setMode(settings['mode']);
-	
-	// preferences
-	setPreferences();
-	
-	loadContract();
-	
-	// show
-	$("#editor").show();
-	$("#editor").focus();
-	editor.focus();
-	
-	loadParameters(); // hash
-	
-	// Anon
-	if(isUserAnon()) { 
-		etherGrowl("Welcome! feel free to edit the contract", "info", 'fa-file-text-o');
-		// todo, sign-up growls...
-	} else {
-		// is my doc?
-		// else
-	}
+}
+
+
+// Set Privacy
+function setPrivacy() {
+	var privacy = gObj['privacy'];
+	$("#privacyLabel").html( CONTRACT_PRIVACY[privacy]['html'] );
+	$("#privacyLabel").attr('title', CONTRACT_PRIVACY[privacy]['title']);
+	$("#privacyLabel").tooltip('destroy');
+	$("#privacyLabel").tooltip({placement:'right'});
 }
 
 
@@ -159,6 +131,62 @@ function loadContract() {
 }
 
 
+
+function setEditor() {
+	// show
+	$("#editor").show();
+	$("#editor").focus();
+	editor.focus();
+	
+	loadParameters(); // hash
+	
+	// Anon
+	if(isUserAnon()) { 
+		etherGrowl("Welcome! feel free to edit the contract", "info", 'fa-file-text-o');
+		// todo, sign-up growls...
+	} else {
+		// is my doc?
+		// else
+	}
+	
+	// code changed
+	editor.getSession().on('change', function(e) {
+    	// e.type, etc
+		//console.log(e);
+		if(true) {
+			setIconState('typing');
+		}
+	});
+	
+	
+	// selected code
+	editor.getSession().selection.on('changeSelection', function(e) {
+	});
+	
+	
+	// annotation changed
+	editor.getSession().on("changeAnnotation", function(){
+		var annot = editor.getSession().getAnnotations();
+		for(var key in annot) {
+			if(annot.hasOwnProperty(key)) {
+            	//console.log("[" + annot[key][0].row + " , " + annot[key][0].column + "] - \t" + annot[key][0].text);
+    		}
+		}
+	});
+	
+	// add command
+	editor.commands.addCommand({
+		name: 'myCommand',
+		bindKey: {win: 'Ctrl-M',  mac: 'Command-M'},
+		exec: function(editor) {
+		},
+		readOnly: true // false if this command should not apply in readOnly mode
+	});
+}
+
+
+
+
 // load parameters from hash
 function loadParameters() {
 	var params = getHashParams();
@@ -187,7 +215,6 @@ $('#contractTabs a').click(function(e) {
 // Download button
 $("#downloadBtn").click(function(e) {
 	e.preventDefault();
-	
 	$("#saveName").attr('value', gObj['name']);
 	$("#saveLang").attr('value', gObj['language']);
 	$("#saveCode").attr('value', encodeURIComponent(editor.getValue()));
@@ -221,9 +248,10 @@ $("#saveBtn").click(function(e) {
 // Login or Register Modal
 function loginOrRegisterModal(title, action, func) {
 	if(isUserAnon()) {
-		$("#loginModal .modal-title").html(title);
-		$("#loginModal #dothat").html(action); 
-		$("#loginModal").modal({});
+		var modal = $("#loginModal");
+		modal.find(".modal-title").html(title);
+		modal.find("#dothat").html(action); 
+		modal.find("#loginModal").modal({});
 	} else {
 		func();
 	}
@@ -232,9 +260,7 @@ function loginOrRegisterModal(title, action, func) {
 // Save Contract
 function saveContract() {
 	if(isUserAnon()) { return; }
-	// according to gState
-	
-	gObj['code'] = editor.getValue()
+	gObj['code'] = editor.getValue();
 	
 	etherPost("/contract/save", gObj, function(data) {
 		etherGrowl("Saved '<b>"+gObj['name']+"</b>'", "success", 'fa-save');
@@ -258,36 +284,67 @@ function forkContract() {
 
 // CONTRACT DIALOG
 
-// contract meta dialog
+// OPEN contract meta dialog
 $("#metaBtn, #editDesc").click(function(e) {
 	e.preventDefault();
-	$("#contractModal #contractName").val(gObj['name']);
-	$("#contractModal #contractDesc").val(gObj['desc']);
-	//todo: btn-language, category, privacy
+	var modal = $("#contractModal");
 	
-	$("#saveMetaBtn").button("reset");
-	$("#contractModal").modal({});
+	modal.find("#contractName").val(gObj['name']);
+	modal.find("#contractDesc").val(gObj['desc']);
+	
+	modal.find("#btnLanguage").val(gObj['language']);
+	modal.find("#btnLanguage").html(gObj['language']+" <span class='caret'></span>");
+	
+	modal.find("#btnPrivacy").val(gObj['privacy']);
+	modal.find("#btnPrivacy").html(CONTRACT_PRIVACY[gObj['privacy']]['html'] +" <span class='caret'></span>");
+	//todo: category
+	
+	modal.find("#saveMetaBtn").button("reset");
+	modal.modal({});
+	
+	// language selected
+	modal.find('ul#dropdownLanguages li a').off('click');
+	modal.find("ul#dropdownLanguages li a").click(function(e) {
+		e.preventDefault();
+		modal.find("#btnLanguage").html($(this).html()+" <span class='caret'></span>");
+		modal.find("#btnLanguage").val($(this).attr('data-id'));
+	});
+	
+	// privacy selected
+	modal.find('ul#dropdownPrivacy li a').off('click');
+	modal.find("ul#dropdownPrivacy li a").click(function(e) {
+		e.preventDefault();
+		modal.find("#btnPrivacy").html($(this).html()+" <span class='caret'></span>");
+		modal.find("#btnPrivacy").val($(this).attr('data-id'));
+	});
 });
 
 
-// save contract meta dialog
+// SAVE contract meta dialog
 $("#saveMetaBtn").click(function(e) {
 	e.preventDefault();
-	gObj['name'] = $("#contractModal #contractName").val();
-	gObj['desc'] = $("#contractModal #contractDesc").val();
-	//todo: btn-language, category
+	var modal = $("#contractModal");
+	
+	gObj['name'] = modal.find("#contractName").val();
+	gObj['desc'] = modal.find("#contractDesc").val();
+	gObj['language'] = modal.find("#btnLanguage").val();
+	gObj['privacy'] = modal.find("#btnPrivacy").val().toLowerCase();
+	//todo: category
 	
 	etherPost("/contract/save", gObj, function(data) {
   		$("h1 #contractName").text(gObj['name']);
 		$("#contractTabContent #contractDesc").text(gObj['desc']);
-		$("#contractModal").modal('hide');
-		// todo: language, category, privacy
+		setLanguage();
+		setPrivacy();
+		// todo: category
 		// todo: change slug in url if different than new slug
+		
+		modal.modal('hide');
 		etherGrowl("Saved '<b>"+gObj['name']+"</b>'", "success", 'fa-save');
 		
 	}, function(data) {
 		console.log('error: '+data);
-		$("#contractModal").modal('hide');
+		modal.modal('hide');
 		etherGrowl("Error saving '<b>"+gObj['name']+"</b>'", "danger", 'fa-warning');
 	});
 });
@@ -300,34 +357,34 @@ $("#saveMetaBtn").click(function(e) {
 // editor preference dialog
 $("#prefBtn").click(function(e) {
 	e.preventDefault();
+	var modal = $("#prefModal");
 	
-	$("ul#dropdownThemes li").remove();
+	modal.find("ul#dropdownThemes li").remove();
 	for(i=0; i < EDITOR_THEMES.length; ++i) {
 		var theme = EDITOR_THEMES[i];
-		$("ul#dropdownThemes").append("<li class='"+(gPref['theme']==theme?'active':'')+"'><a data-id='"+theme+"' href='#'>"+theme+"</a></li>");
+		modal.find("ul#dropdownThemes").append("<li class='"+(gPref['theme']==theme?'active':'')+"'><a data-id='"+theme+"' href='#'>"+theme+"</a></li>");
 	}
-	$("#prefModal #btnTheme").html(gPref['theme'] + " <span class='caret'></span>");
-	$("#prefModal #btnTheme").val(gPref['theme']);
-	$("#prefModal #fontSize").val(gPref['fontSize']);
-	$("#prefModal #tabSize").val(gPref['tabSize']);
+	modal.find("#btnTheme").html(gPref['theme'] + " <span class='caret'></span>");
+	modal.find("#btnTheme").val(gPref['theme']);
+	modal.find("#fontSize").val(gPref['fontSize']);
+	modal.find("#tabSize").val(gPref['tabSize']);
 	
 	// checkboxes..
-	if(gPref['softTabs'] == "1") { $("#prefModal #softTabs").attr('checked', true); }
-	if(gPref['wrapMode'] == "1") { $("#prefModal #wrapMode").attr('checked', true); }
-	if(gPref['highlightActiveLine'] == "1") { $("#prefModal #highlightActiveLine").attr('checked', true); }
-	if(gPref['showPrintMargin'] == "1") { $("#prefModal #showPrintMargin").attr('checked', true); }
+	if(gPref['softTabs'] == "1") { modal.find("#softTabs").attr('checked', true); }
+	if(gPref['wrapMode'] == "1") { modal.find("#wrapMode").attr('checked', true); }
+	if(gPref['highlightActiveLine'] == "1") { modal.find("#highlightActiveLine").attr('checked', true); }
+	if(gPref['showPrintMargin'] == "1") { modal.find("#showPrintMargin").attr('checked', true); }
 	
-	$("#savePrefBtn").button("reset");
-	$("#prefModal").modal({});
+	modal.find("#savePrefBtn").button("reset");
+	modal.modal({});
 	
 	// theme preference selected
-	$('#prefModal ul#dropdownThemes li a').off('click');
-	$("#prefModal ul#dropdownThemes li a").click(function(e) {
+	modal.find('ul#dropdownThemes li a').off('click');
+	modal.find("ul#dropdownThemes li a").click(function(e) {
 		e.preventDefault();
-		
 		var theme = $(this).attr('data-id');
-		$("#prefModal #btnTheme").html(theme+" <span class='caret'></span>");
-		$("#prefModal #btnTheme").val(theme);
+		modal.find("#btnTheme").html(theme+" <span class='caret'></span>");
+		modal.find("#btnTheme").val(theme);
 		// note: cant change theme dynamically while in modal
 	});
 });
@@ -337,20 +394,21 @@ $("#prefBtn").click(function(e) {
 // Save editor preferences
 $("#savePrefBtn").click(function(e) {
 	e.preventDefault();
+	var modal = $("#prefModal");
 	
-	gPref['theme'] = $("#prefModal #btnTheme").val();
-	gPref['fontSize'] = $("#prefModal #fontSize").val();
-	gPref['tabSize'] = $("#prefModal #tabSize").val();
+	gPref['theme'] = modal.find("#btnTheme").val();
+	gPref['fontSize'] = modal.find("#fontSize").val();
+	gPref['tabSize'] = modal.find("#tabSize").val();
 	
 	// checkboxes..
-	gPref['softTabs'] = $("#prefModal #softTabs").is(':checked') ? "1" : "0";
-	gPref['wrapMode'] = $("#prefModal #wrapMode").is(':checked') ? "1" : "0";
-	gPref['highlightActiveLine'] = $("#prefModal #highlightActiveLine").is(':checked') ? "1" : "0";
-	gPref['showPrintMargin'] = $("#prefModal #showPrintMargin").is(':checked') ? "1" : "0";
+	gPref['softTabs'] = modal.find("#softTabs").is(':checked') ? "1" : "0";
+	gPref['wrapMode'] = modal.find("#wrapMode").is(':checked') ? "1" : "0";
+	gPref['highlightActiveLine'] = modal.find("#highlightActiveLine").is(':checked') ? "1" : "0";
+	gPref['showPrintMargin'] = modal.find("#showPrintMargin").is(':checked') ? "1" : "0";
 	
 	// Anon
 	if(isUserAnon()) { 
-		$("#prefModal").modal('hide');
+		modal.modal('hide');
 		setPreferences();
 		etherGrowl("Saved editor preferences temporarily", "success", 'fa-save', function() {
 			etherGrowl("<a href='/user/login/'>Log-in or Register</a> to save permanently", "info", 'fa-cog');
@@ -358,17 +416,17 @@ $("#savePrefBtn").click(function(e) {
 		return;
 	}
 	
-	// todo: cookie alt??
+	// todo: cookie alternative to backend?
 	
 	// save for users
 	etherPost("/contract/userpref", gPref, function(data) {
-		$("#prefModal").modal('hide');
+		modal.modal('hide');
 		setPreferences();
 		etherGrowl("Saved Editor Preferences", "success", 'fa-save');
 		
 	}, function(data) {
 		console.log('error: '+data);
-		$("#prefModal").modal('hide');
+		modal.modal('hide');
 		etherGrowl("Error saving editor preferences", "danger", 'fa-warning');
 	});
 });
