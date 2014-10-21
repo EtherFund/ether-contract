@@ -125,6 +125,9 @@ function setEditor() {
 	editor.focus();
 	
 	loadParameters(); // hash
+	
+	etherGrowl("Welcome! feel free to edit the contract", "info", 'fa-file-text-o');
+	// todo, sign-up growls...
 }
 
 
@@ -194,7 +197,7 @@ $("#downloadBtn").click(function(e) {
 	$("#downloadForm").attr('action', '/contract/download');
 	$("#downloadForm").submit();
 	
-	etherGrowl("Downloading '<b>"+gObj['name']+"</b>'...", "success");
+	etherGrowl("Downloading '<b>"+gObj['name']+"</b>'...", "success", 'fa-download');
 });
 
 
@@ -234,10 +237,10 @@ function saveContract() {
 	// according to gState
 	
 	etherPost("/contract/save", gObj, function(data) {
-		etherGrowl("Saved '<b>"+gObj['name']+"</b>'", "success");
+		etherGrowl("Saved '<b>"+gObj['name']+"</b>'", "success", 'fa-save');
 		
 	}, function(data) {
-		etherGrowl("Error saving '<b>"+gObj['name']+"</b>'", "danger");
+		etherGrowl("Error saving '<b>"+gObj['name']+"</b>'", "danger", 'fa-warning');
 		console.log('error saving: '+data);
 	});
 }
@@ -277,12 +280,12 @@ $("#saveMetaBtn").click(function(e) {
   		$("h1 #contractName").text(gObj['name']);
 		$("#contractTabContent #contractDesc").text(gObj['desc']);
 		$("#contractModal").modal('hide');
-		etherGrowl("Saved '<b>"+gObj['name']+"</b>'", "success");
+		etherGrowl("Saved '<b>"+gObj['name']+"</b>'", "success", 'fa-save');
 		
 	}, function(data) {
 		console.log('error: '+data);
 		$("#contractModal").modal('hide');
-		etherGrowl("Error saving '<b>"+gObj['name']+"</b>'", "danger");
+		etherGrowl("Error saving '<b>"+gObj['name']+"</b>'", "danger", 'fa-warning');
 	});
 });
 
@@ -345,7 +348,7 @@ $("#savePrefBtn").click(function(e) {
 	if(isUserAnon()) { 
 		$("#prefModal").modal('hide');
 		setPreferences();
-		etherGrowl("Saved Editor Preferences", "success");
+		etherGrowl("Saved Editor Preferences", "success", 'fa-save');
 		return;
 	}
 	
@@ -355,12 +358,12 @@ $("#savePrefBtn").click(function(e) {
 	etherPost("/contract/userpref", gPref, function(data) {
 		$("#prefModal").modal('hide');
 		setPreferences();
-		etherGrowl("Saved Editor Preferences", "success");
+		etherGrowl("Saved Editor Preferences", "success", 'fa-save');
 		
 	}, function(data) {
 		console.log('error: '+data);
 		$("#prefModal").modal('hide');
-		etherGrowl("Error saving editor preferences", "danger");
+		etherGrowl("Error saving editor preferences", "danger", 'fa-warning');
 	});
 });
 

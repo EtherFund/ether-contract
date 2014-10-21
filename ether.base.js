@@ -329,14 +329,19 @@ function etherParse(data) {
 
 
 // growl
-function etherGrowl(msg, type) {
+function etherGrowl(msg, type, icon) {
+	var params = { message:msg };
+	if(icon) {
+		params['message'] = " "+msg
+		params['icon'] = 'fa fa-fw fa-lg '+icon
+	}
 	
-	$.growl({ message:msg }, 
+	$.growl(params, 
 		{ type:type, allow_dismiss:false,
 		element:"#editorPanel", placement:{align:'left'},
-		offset:{x:15, y:-51}, padding:0,
+		offset:{x:15, y:-46}, padding:0,
 		animate: {
-		enter: 'animated flipInY',
+		enter: 'animated flipInX',
 		exit: 'animated flipOutX'
 		}	
 	});
