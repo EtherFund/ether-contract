@@ -306,10 +306,14 @@ function etherPost(url, data, done, error) {
 		beforeSend:function(xhr, settings) {
 		},
 	  	success:function(data) {
-			done();
+			if('error' in data) {
+				error(data);
+			} else {
+				done(data);
+			}
 	  	},
 	  	error:function() {
-			error();
+			error(data);
 	  	}
 	});
 };

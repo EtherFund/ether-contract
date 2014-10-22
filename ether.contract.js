@@ -61,7 +61,11 @@ $(function () {
 	
 	loadContract();
 	
+	loadParameters(); // hash
+		
 	setEditor();
+	
+	//setNavigateAway();
 	
 	$("#editorLoader").remove();
 });
@@ -70,13 +74,13 @@ $(function () {
 
 // Set language
 function setLanguage() {
-	var lang = gObj['language'];
+	var lang = gObj.language;
 	var language = ETH_LANGUAGES[lang];
 	
 	// language label
-	$("#language").text(language['name']);
-	$("#language").attr('href', language['specs']);
-	$("#language").attr('title', language['desc']);
+	$("#language").text(language.name);
+	$("#language").attr('href', language.specs);
+	$("#language").attr('title', language.desc);
 	
 	// first line of the panel on the right
 	$('#contractType >').tooltip('destroy');
@@ -88,15 +92,15 @@ function setLanguage() {
 	
 	var settings = EDITOR_SETTINGS[lang];
 	// mode
-	editor.getSession().setMode(settings['mode']);
+	editor.getSession().setMode(settings.mode);
 }
 
 
 // Set Privacy
 function setPrivacy() {
-	var privacy = gObj['privacy'];
-	$("#privacyLabel").html( CONTRACT_PRIVACY[privacy]['html'] );
-	$("#privacyLabel").attr('title', CONTRACT_PRIVACY[privacy]['title']);
+	var privacy = gObj.privacy;
+	$("#privacyLabel").html( CONTRACT_PRIVACY[privacy].html);
+	$("#privacyLabel").attr('title', CONTRACT_PRIVACY[privacy].title);
 	$("#privacyLabel").tooltip('destroy');
 	$("#privacyLabel").tooltip({placement:'right'});
 }
@@ -104,26 +108,26 @@ function setPrivacy() {
 
 
 function loadContract() {
-	if(gObj['code']) {
-		editor.setValue(gObj['code']);
+	if(gObj.code) {
+		editor.setValue(gObj.code);
 	}
 	
 	// Data
-	if(gObj['data']) {
+	if(gObj.data) {
 		//$("#data").text();
 	} else {
 		$("#data").text("No Data module yet.");
 	}
 	
 	// Messages
-	if(gObj['messages']) {
+	if(gObj.messages) {
 		//$("#data").text();
 	} else {
 		$("#messages").text("No Messages module yet.");
 	}
 	
 	// Debug
-	if(gObj['debug']) {
+	if(gObj.debug) {
 		//$("#data").text();
 	} else {
 		$("#debug").text("No Debug/Simulation module yet.");
@@ -138,11 +142,10 @@ function setEditor() {
 	$("#editor").focus();
 	editor.focus();
 	
-	loadParameters(); // hash
 	
 	// Anon
 	if(isUserAnon()) { 
-		etherGrowl("Welcome! feel free to edit the contract", "info", 'fa-file-text-o');
+		etherGrowl("Welcome! Feel free to edit the contract", "info", 'fa-file-text-o');
 		// todo, sign-up growls...
 	} else {
 		// is my doc?
@@ -186,7 +189,6 @@ function setEditor() {
 
 
 
-
 // load parameters from hash
 function loadParameters() {
 	var params = getHashParams();
@@ -203,6 +205,15 @@ function loadParameters() {
 }
 
 
+function setNavigateAway() {
+	// todo: if not saved recently
+	window.onbeforeunload = function() {
+    	return "Your latest contract modification won't be saved";
+	};
+}
+
+
+
 
 
 // Editor tabs
@@ -215,14 +226,14 @@ $('#contractTabs a').click(function(e) {
 // Download button
 $("#downloadBtn").click(function(e) {
 	e.preventDefault();
-	$("#saveName").attr('value', gObj['name']);
-	$("#saveLang").attr('value', gObj['language']);
+	$("#saveName").attr('value', gObj.name);
+	$("#saveLang").attr('value', gObj.language);
 	$("#saveCode").attr('value', encodeURIComponent(editor.getValue()));
 	
 	$("#downloadForm").attr('action', '/contract/download');
 	$("#downloadForm").submit();
 	
-	etherGrowl("Downloading '<b>"+gObj['name']+"</b>'...", "success", 'fa-download');
+	etherGrowl("Downloading '<b>"+gObj.name+"</b>'...", "success", 'fa-download');
 });
 
 
@@ -230,7 +241,7 @@ $("#downloadBtn").click(function(e) {
 // Fork button
 $("#forkBtn").click(function(e) {
 	e.preventDefault();
-	loginOrRegisterModal("<i class='fa fa-code-fork'></i> Forking Contract", "fork<br><b>"+gObj['name']+"</b>", function() {
+	loginOrRegisterModal("<i class='fa fa-code-fork'></i> Forking Contract", "fork<br><b>"+gObj.name+"</b>", function() {
 		// fork
 		forkContract();
 	});
@@ -239,7 +250,7 @@ $("#forkBtn").click(function(e) {
 // Save Button
 $("#saveBtn").click(function(e) {
 	e.preventDefault();
-	loginOrRegisterModal("<i class='fa fa-save'></i> Save Contract", "save<br><b>"+gObj['name']+"</b>", function() {
+	loginOrRegisterModal("<i class='fa fa-save'></i> Save Contract", "save<br><b>"+gObj.name+"</b>", function() {
 		// save
 		saveContract();
 	});
@@ -251,23 +262,25 @@ function loginOrRegisterModal(title, action, func) {
 		var modal = $("#loginModal");
 		modal.find(".modal-title").html(title);
 		modal.find("#dothat").html(action); 
-		modal.find("#loginModal").modal({});
+		modal.modal({});
 	} else {
 		func();
 	}
 }
 
+
 // Save Contract
 function saveContract() {
 	if(isUserAnon()) { return; }
-	gObj['code'] = editor.getValue();
+	gObj.code = editor.getValue();
+	gObj.linecount = editor.session.getLength();
 	
 	etherPost("/contract/save", gObj, function(data) {
-		etherGrowl("Saved '<b>"+gObj['name']+"</b>'", "success", 'fa-save');
+		etherGrowl("Saved '<b>"+gObj.name+"</b>'", "success", 'fa-save');
 		
 	}, function(data) {
-		etherGrowl("Error saving '<b>"+gObj['name']+"</b>'", "danger", 'fa-warning');
-		console.log('error saving: '+data);
+		console.log('Error:'); console.log(data);
+		etherGrowl("Error saving '<b>"+gObj.name+"</b>'", "danger", 'fa-warning');
 	});
 }
 
@@ -289,14 +302,14 @@ $("#metaBtn, #editDesc").click(function(e) {
 	e.preventDefault();
 	var modal = $("#contractModal");
 	
-	modal.find("#contractName").val(gObj['name']);
-	modal.find("#contractDesc").val(gObj['desc']);
+	modal.find("#contractName").val(gObj.name);
+	modal.find("#contractDesc").val(gObj.desc);
 	
-	modal.find("#btnLanguage").val(gObj['language']);
-	modal.find("#btnLanguage").html(gObj['language']+" <span class='caret'></span>");
+	modal.find("#btnLanguage").val(gObj.language);
+	modal.find("#btnLanguage").html(gObj.language+" <span class='caret'></span>");
 	
-	modal.find("#btnPrivacy").val(gObj['privacy']);
-	modal.find("#btnPrivacy").html(CONTRACT_PRIVACY[gObj['privacy']]['html'] +" <span class='caret'></span>");
+	modal.find("#btnPrivacy").val(gObj.privacy);
+	modal.find("#btnPrivacy").html(CONTRACT_PRIVACY[gObj.privacy].html +" <span class='caret'></span>");
 	//todo: category
 	
 	modal.find("#saveMetaBtn").button("reset");
@@ -323,29 +336,35 @@ $("#metaBtn, #editDesc").click(function(e) {
 // SAVE contract meta dialog
 $("#saveMetaBtn").click(function(e) {
 	e.preventDefault();
+	if(isUserAnon()) { return; }
 	var modal = $("#contractModal");
 	
-	gObj['name'] = modal.find("#contractName").val();
-	gObj['desc'] = modal.find("#contractDesc").val();
-	gObj['language'] = modal.find("#btnLanguage").val();
-	gObj['privacy'] = modal.find("#btnPrivacy").val().toLowerCase();
+	gObj.name = modal.find("#contractName").val();
+	gObj.desc = modal.find("#contractDesc").val();
+	gObj.language = modal.find("#btnLanguage").val();
+	gObj.privacy = modal.find("#btnPrivacy").val().toLowerCase();
 	//todo: category
 	
+	gObj.code = editor.getValue();
+	gObj.linecount = editor.session.getLength();
+	
+	
 	etherPost("/contract/save", gObj, function(data) {
-  		$("h1 #contractName").text(gObj['name']);
-		$("#contractTabContent #contractDesc").text(gObj['desc']);
+		$("h1 #contractName").text(gObj.name);
+		$("#contractTabContent #contractDesc").text(gObj.desc);
 		setLanguage();
 		setPrivacy();
 		// todo: category
 		// todo: change slug in url if different than new slug
 		
 		modal.modal('hide');
-		etherGrowl("Saved '<b>"+gObj['name']+"</b>'", "success", 'fa-save');
+		etherGrowl("Saved '<b>"+gObj.name+"</b>'", "success", 'fa-save');
 		
 	}, function(data) {
-		console.log('error: '+data);
+		console.log('Error:'); console.log(data);
+		//if('error' in data) {
 		modal.modal('hide');
-		etherGrowl("Error saving '<b>"+gObj['name']+"</b>'", "danger", 'fa-warning');
+		etherGrowl("Error saving '<b>"+gObj.name+"</b>'", "danger", 'fa-warning');
 	});
 });
 
@@ -362,18 +381,18 @@ $("#prefBtn").click(function(e) {
 	modal.find("ul#dropdownThemes li").remove();
 	for(i=0; i < EDITOR_THEMES.length; ++i) {
 		var theme = EDITOR_THEMES[i];
-		modal.find("ul#dropdownThemes").append("<li class='"+(gPref['theme']==theme?'active':'')+"'><a data-id='"+theme+"' href='#'>"+theme+"</a></li>");
+		modal.find("ul#dropdownThemes").append("<li class='"+(gPref.theme==theme?'active':'')+"'><a data-id='"+theme+"' href='#'>"+theme+"</a></li>");
 	}
-	modal.find("#btnTheme").html(gPref['theme'] + " <span class='caret'></span>");
-	modal.find("#btnTheme").val(gPref['theme']);
-	modal.find("#fontSize").val(gPref['fontSize']);
-	modal.find("#tabSize").val(gPref['tabSize']);
+	modal.find("#btnTheme").html(gPref.theme + " <span class='caret'></span>");
+	modal.find("#btnTheme").val(gPref.theme);
+	modal.find("#fontSize").val(gPref.fontSize);
+	modal.find("#tabSize").val(gPref.tabSize);
 	
 	// checkboxes..
-	if(gPref['softTabs'] == "1") { modal.find("#softTabs").attr('checked', true); }
-	if(gPref['wrapMode'] == "1") { modal.find("#wrapMode").attr('checked', true); }
-	if(gPref['highlightActiveLine'] == "1") { modal.find("#highlightActiveLine").attr('checked', true); }
-	if(gPref['showPrintMargin'] == "1") { modal.find("#showPrintMargin").attr('checked', true); }
+	if(gPref.softTabs == "1") { modal.find("#softTabs").attr('checked', true); }
+	if(gPref.wrapMode == "1") { modal.find("#wrapMode").attr('checked', true); }
+	if(gPref.highlightActiveLine == "1") { modal.find("#highlightActiveLine").attr('checked', true); }
+	if(gPref.showPrintMargin == "1") { modal.find("#showPrintMargin").attr('checked', true); }
 	
 	modal.find("#savePrefBtn").button("reset");
 	modal.modal({});
@@ -382,7 +401,7 @@ $("#prefBtn").click(function(e) {
 	modal.find('ul#dropdownThemes li a').off('click');
 	modal.find("ul#dropdownThemes li a").click(function(e) {
 		e.preventDefault();
-		var theme = $(this).attr('data-id');
+		var theme = $(this).data('id');
 		modal.find("#btnTheme").html(theme+" <span class='caret'></span>");
 		modal.find("#btnTheme").val(theme);
 		// note: cant change theme dynamically while in modal
@@ -396,15 +415,15 @@ $("#savePrefBtn").click(function(e) {
 	e.preventDefault();
 	var modal = $("#prefModal");
 	
-	gPref['theme'] = modal.find("#btnTheme").val();
-	gPref['fontSize'] = modal.find("#fontSize").val();
-	gPref['tabSize'] = modal.find("#tabSize").val();
+	gPref.theme = modal.find("#btnTheme").val();
+	gPref.fontSize = modal.find("#fontSize").val();
+	gPref.tabSize = modal.find("#tabSize").val();
 	
 	// checkboxes..
-	gPref['softTabs'] = modal.find("#softTabs").is(':checked') ? "1" : "0";
-	gPref['wrapMode'] = modal.find("#wrapMode").is(':checked') ? "1" : "0";
-	gPref['highlightActiveLine'] = modal.find("#highlightActiveLine").is(':checked') ? "1" : "0";
-	gPref['showPrintMargin'] = modal.find("#showPrintMargin").is(':checked') ? "1" : "0";
+	gPref.softTabs = modal.find("#softTabs").is(':checked') ? "1" : "0";
+	gPref.wrapMode = modal.find("#wrapMode").is(':checked') ? "1" : "0";
+	gPref.highlightActiveLine = modal.find("#highlightActiveLine").is(':checked') ? "1" : "0";
+	gPref.showPrintMargin = modal.find("#showPrintMargin").is(':checked') ? "1" : "0";
 	
 	// Anon
 	if(isUserAnon()) { 
@@ -425,7 +444,7 @@ $("#savePrefBtn").click(function(e) {
 		etherGrowl("Saved Editor Preferences", "success", 'fa-save');
 		
 	}, function(data) {
-		console.log('error: '+data);
+		console.log('Error:'); console.log(data);
 		modal.modal('hide');
 		etherGrowl("Error saving editor preferences", "danger", 'fa-warning');
 	});
@@ -435,14 +454,14 @@ $("#savePrefBtn").click(function(e) {
 // Set preferences
 function setPreferences() {
 	console.log(gPref);
-	editor.setTheme("ace/theme/"+gPref['theme']);
-	document.getElementById('editor').style.fontSize=gPref['fontSize']+'px';
+	editor.setTheme("ace/theme/"+gPref.theme);
+	document.getElementById('editor').style.fontSize = gPref.fontSize+'px';
 	
-	editor.getSession().setTabSize(parseInt(gPref['tabSize']));
-	editor.getSession().setUseSoftTabs(gPref['softTabs'] == "1");
-	editor.getSession().setUseWrapMode(gPref['wrapMode'] == "1");
-	editor.setHighlightActiveLine(gPref['highlightActiveLine'] == "1");
-	editor.setShowPrintMargin(gPref['showPrintMargin'] == "1");
+	editor.getSession().setTabSize(parseInt(gPref.tabSize));
+	editor.getSession().setUseSoftTabs(gPref.softTabs == "1");
+	editor.getSession().setUseWrapMode(gPref.wrapMode == "1");
+	editor.setHighlightActiveLine(gPref.highlightActiveLine == "1");
+	editor.setShowPrintMargin(gPref.showPrintMargin == "1");
 	//editor.getSession().setShowFoldWidget(true);
 	//editor.getSession().showInvisibles(true);
 }
@@ -468,9 +487,3 @@ function setIconState(state) {
 	$("#contractIcon").html("<i class='fa fa-file-text-o'></i>");
 }
 
-
-/*
-window.onbeforeunload = function() {
-    return 'Are you sure you want to navigate away from this page?';
-};
-*/
