@@ -5,17 +5,6 @@
 - (c) 2014 J.R. Bédard (jrbedard.com)
 */
 
-// todo: multiple settings per lang?
-const EDITOR_SETTINGS = {
-	'LLL':{'name':"LLL", 'mode':"ace/mode/lisp",
-	},
-	'Mutan':{'name':"Mutan", 'mode':"ace/mode/c_cpp",
-	},
-	'Serpent':{'name':"Serpent", 'mode':"ace/mode/python",
-	},
-	'Solidity':{'name':"Solidity", 'mode':"ace/mode/c_cpp",
-	},
-};
 
 // themes
 const EDITOR_THEMES = ["ambiance","chaos","chrome","clouds","clouds_midnight","cobalt","crimson_editor","dawn","dreamweaver","eclipse","github","idle_fingers","katzenmilch","kr_theme","kuroir","merbivore","merbivore_soft","mono_industrial","monokai","pastel_on_dark","solarized_dark","solarized_light","terminal","textmate","tomorrow","tomorrow_night","tomorrow_night_blue","tomorrow_night_bright","tomorrow_night_eighties","twilight","vibrant_ink","xcode"];
@@ -90,9 +79,8 @@ function setLanguage() {
 	$("#languageLabel").text(lang);
 	//$("#languageLabel").attr('href', 'test'); // todo
 	
-	var settings = EDITOR_SETTINGS[lang];
 	// mode
-	editor.getSession().setMode(settings.mode);
+	editor.getSession().setMode(language.mode);
 }
 
 

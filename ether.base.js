@@ -28,19 +28,19 @@ const ETH_FEES = {
 
 // contract languages
 const ETH_LANGUAGES = {
-	'LLL':{'name':"LLL", 'syntax':"Lisp", 'ext':"lll",
+	'LLL':{'name':"LLL", 'syntax':"Lisp", 'ext':"lll", 'mode':"ace/mode/lisp",
 		'desc':"LLL is the Ethereum Low-level Lisp-like Language.",
 		'specs':"https://github.com/ethereum/cpp-ethereum/wiki/LLL-PoC-6",
 	},
-	'Mutan':{'name':"Mutan", 'syntax':"C++", 'ext':"mut",
+	'Mutan':{'name':"Mutan", 'syntax':"C++", 'ext':"mut", 'mode':"ace/mode/c_cpp",
 		'desc':"Mutan is a C-Like language for the Ethereum project.",
 		'specs':"https://github.com/ethereum/go-ethereum/wiki/Mutan",
 	},
-	'Serpent':{'name':"Serpent", 'syntax':"Python", 'ext':"se",
+	'Serpent':{'name':"Serpent", 'syntax':"Python", 'ext':"se", 'mode':"ace/mode/python",
 		'desc':"Serpent is designed to be very similar to Python.",
 		'specs':"https://github.com/ethereum/wiki/wiki/Serpent",
 	},
-	'Solidity':{'name':"Solidity", 'syntax':"C++", 'ext':"so",
+	'Solidity':{'name':"Solidity", 'syntax':"C++", 'ext':"so", 'mode':"ace/mode/c_cpp",
 		'desc':".",
 		'specs':"",
 	},
