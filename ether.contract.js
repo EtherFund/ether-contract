@@ -145,8 +145,9 @@ function setEditor() {
 	
 	// Anon
 	if(isUserAnon()) { 
-		etherGrowl("Welcome! Feel free to edit the contract", "info", 'fa-file-text-o');
-		// todo, sign-up growls...
+		etherGrowl("Welcome! Feel free to edit the contract", "info", 'fa-file-text-o', function() {
+			etherGrowl("But you need to <a href='/user/login/'>Log-in</a> to create one", "warning", 'fa-sign-in')
+		});
 	} else {
 		// is my doc?
 		// else
@@ -233,7 +234,7 @@ $("#downloadBtn").click(function(e) {
 	$("#downloadForm").attr('action', '/contract/download');
 	$("#downloadForm").submit();
 	
-	etherGrowl("Downloading '<b>"+gObj.name+"</b>'...", "success", 'fa-download');
+	etherGrowl("Downloading '<b>"+gObj.name+"."+ETH_LANGUAGES[gObj.language].ext+"</b>'...", "success", 'fa-download');
 });
 
 
