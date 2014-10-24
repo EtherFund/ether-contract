@@ -1,4 +1,4 @@
 ether-contract
 ==============
 
-Contract Editor and Viewer for Ethereum
+Smart Contract Editor and Simulator for Ethereum: http://ether.fund/contract
