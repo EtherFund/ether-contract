@@ -272,7 +272,6 @@ function saveContract() {
 
 // Fork Contract
 function forkContract() {
-	
 	etherGrowl("Forking is not implemented yet!", "warning", 'fa-code-fork');
 }
 
