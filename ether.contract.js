@@ -11,12 +11,6 @@ const EDITOR_THEMES = ["ambiance","chaos","chrome","clouds","clouds_midnight","c
 
 const EDITOR_DEFAULT = {"theme":"idle_fingers", "fontSize":"12", "tabSize":"4", "softTabs":1, "wrapMode":1, "highlightActiveLine":1, "showPrintMargin":0};
 
-const CONTRACT_PRIVACY = {
-	'public':{'html':"<i class='fa fa-globe'></i> Public", 'title':"Viewable by anyone.", 'label':"success"},
-	'unlisted':{'html':"<i class='fa fa-list-ul'></i> Unlisted", 'title':"Viewable by anyone but not listed anywhwere (secret URL).", 'label':"warning"},
-	'private':{'html':"<i class='fa fa-lock'></i> Private", 'title':"Viewable only by you.", 'label':"danger"},
-};
-
 const ICON_STATES = {
 	'default':{'icon':"file-o",'color':""},
 	'typing':{'icon':"file-text-o",'color':""},
@@ -86,9 +80,11 @@ function setLanguage() {
 
 // Set Privacy
 function setPrivacy() {
-	var privacy = gObj.privacy;
-	$("#privacyLabel").html( CONTRACT_PRIVACY[privacy].html);
-	$("#privacyLabel").attr('title', CONTRACT_PRIVACY[privacy].title);
+	var privacy = CONTRACT_PRIVACY[gObj.privacy];
+	$("#privacyLabel").html(privacy.html);
+	$("#privacyLabel").attr('title', privacy.title);
+	$("#privacyLabel").attr('class', 'label label-'+privacy.label);
+	
 	$("#privacyLabel").tooltip('destroy');
 	$("#privacyLabel").tooltip({placement:'right'});
 }

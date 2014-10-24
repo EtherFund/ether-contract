@@ -46,6 +46,12 @@ const ETH_LANGUAGES = {
 	},
 };
 
+const CONTRACT_PRIVACY = {
+	'public':{'html':"<i class='fa fa-globe'></i> Public", 'title':"Viewable by anyone.", 'label':"success"},
+	'unlisted':{'html':"<i class='fa fa-list-ul'></i> Unlisted", 'title':"Viewable by anyone but not listed anywhwere (secret URL).", 'label':"warning"},
+	'private':{'html':"<i class='fa fa-lock'></i> Private", 'title':"Viewable only by you.", 'label':"danger"},
+};
+
 
 // btc
 const BTC_UNITS = {'satoshi':1e-8, 'bit':1e-6, 'millibit':1e-3, 'BTC':1.0};
