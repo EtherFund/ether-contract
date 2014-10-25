@@ -359,6 +359,19 @@ function etherGrowl(msg, type, icon, hidden) {
 }
 
 
+// Login or Register Modal
+function loginOrRegisterModal(title, action, func) {
+	if(isUserAnon()) {
+		var modal = $("#loginModal");
+		modal.find(".modal-title").html(title);
+		modal.find("#dothat").html(action); 
+		modal.modal({});
+	} else {
+		func();
+	}
+}
+
+
 
 
 

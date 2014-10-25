@@ -241,17 +241,7 @@ $("#saveBtn").click(function(e) {
 	});
 });
 
-// Login or Register Modal
-function loginOrRegisterModal(title, action, func) {
-	if(isUserAnon()) {
-		var modal = $("#loginModal");
-		modal.find(".modal-title").html(title);
-		modal.find("#dothat").html(action); 
-		modal.modal({});
-	} else {
-		func();
-	}
-}
+
 
 
 // Save Contract
@@ -274,6 +264,34 @@ function saveContract() {
 function forkContract() {
 	etherGrowl("Forking is not implemented yet!", "warning", 'fa-code-fork');
 }
+
+
+// Delete Contract
+function deleteContract() {
+	if(isUserAnon()) { return; }
+	var modal = $("#deleteModal");
+	modal.find("#deleteContractName").text(gObj.name); 
+	modal.modal({});
+	
+	// Delete Button
+	modal.find("#deleteContractBtn").off('click');
+	modal.find("#deleteContractBtn").click(function(e) {
+		e.preventDefault();
+		
+		etherPost("/contract/delete", gObj, function(data) {
+			modal.modal('hide');
+			etherGrowl("Deleted '<b>"+gObj.name+"</b>'", "success", 'fa-save');
+			window.location.replace("/contracts/"); // redirect
+		
+		}, function(data) {
+			//if('error' in data) {
+			console.log('Error:'); console.log(data);
+			modal.modal('hide');
+			etherGrowl("Error deleting '<b>"+gObj.name+"</b>'", "danger", 'fa-warning');
+		});
+	});
+}
+
 
 
 
@@ -314,6 +332,13 @@ $("#metaBtn, #editDesc").click(function(e) {
 		modal.find("#btnPrivacy").html($(this).html()+" <span class='caret'></span>");
 		modal.find("#btnPrivacy").val($(this).attr('data-id'));
 	});
+	
+	// Delete Button
+	modal.find("#deleteBtn").off('click');
+	modal.find("#deleteBtn").click(function(e) {
+		e.preventDefault();
+		deleteContract();
+	});
 });
 
 
@@ -345,8 +370,8 @@ $("#saveMetaBtn").click(function(e) {
 		etherGrowl("Saved '<b>"+gObj.name+"</b>'", "success", 'fa-save');
 		
 	}, function(data) {
+		//todo: if('error' in data) {
 		console.log('Error:'); console.log(data);
-		//if('error' in data) {
 		modal.modal('hide');
 		etherGrowl("Error saving '<b>"+gObj.name+"</b>'", "danger", 'fa-warning');
 	});
@@ -393,7 +418,6 @@ $("#prefBtn").click(function(e) {
 });
 
 
-
 // Save editor preferences
 $("#savePrefBtn").click(function(e) {
 	e.preventDefault();
@@ -423,6 +447,8 @@ $("#savePrefBtn").click(function(e) {
 	
 	// save for users
 	etherPost("/contract/userpref", gPref, function(data) {
+		//todo: if('error' in data) {
+		
 		modal.modal('hide');
 		setPreferences();
 		etherGrowl("Saved Editor Preferences", "success", 'fa-save');
@@ -437,7 +463,6 @@ $("#savePrefBtn").click(function(e) {
 
 // Set preferences
 function setPreferences() {
-	console.log(gPref);
 	editor.setTheme("ace/theme/"+gPref.theme);
 	document.getElementById('editor').style.fontSize = gPref.fontSize+'px';
 	
