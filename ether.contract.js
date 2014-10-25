@@ -232,6 +232,15 @@ $("#forkBtn").click(function(e) {
 	});
 });
 
+// Star button
+$("#starBtn").click(function(e) {
+	e.preventDefault();
+	loginOrRegisterModal("<i class='fa fa-star'></i> Starring Contract", "star<br><b>"+gObj.name+"</b>", function() {
+		// star
+		starContract();
+	});
+});
+
 // Save Button
 $("#saveBtn").click(function(e) {
 	e.preventDefault();
@@ -260,18 +269,12 @@ function saveContract() {
 }
 
 
-// Fork Contract
-function forkContract() {
-	etherGrowl("Forking is not implemented yet!", "warning", 'fa-code-fork');
-}
-
-
 // Delete Contract
 function deleteContract() {
 	if(isUserAnon()) { return; }
 	var modal = $("#deleteModal");
 	modal.find("#deleteContractName").text(gObj.name); 
-	modal.modal({});
+	modal.modal({}); // Delete Modal
 	
 	// Delete Button
 	modal.find("#deleteContractBtn").off('click');
@@ -292,6 +295,29 @@ function deleteContract() {
 	});
 }
 
+
+// Fork Contract
+function forkContract() {
+	etherGrowl("Forking is not implemented yet!", "warning", 'fa-code-fork');
+}
+
+
+// Star Contract
+function starContract() {
+	etherPost("/contract/star", gObj, function(data) {
+		$("#starBtn #starCount").text( gObj.stars.length+1 );
+		//$("#starBtn").disable(true);
+		etherGrowl("Starred '<b>"+gObj.name+"</b>'", "success", 'fa-star');
+	
+	}, function(data) {
+		if('error' in data && data['error'] == 'already') { 
+			etherGrowl("You already starred '<b>"+gObj.name+"</b>'", "warning", 'fa-star');
+			return;
+		}
+		console.log('Error:'); console.log(data);
+		etherGrowl("Error starring '<b>"+gObj.name+"</b>'", "danger", 'fa-warning');
+	});
+}
 
 
 
