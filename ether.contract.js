@@ -48,9 +48,15 @@ $(function () {
 		
 	setEditor();
 	
-	//setNavigateAway();
+	setTimeout(function () {
+		//editor.resize(true);
+		$("#editor").show();
+		$("#editor").focus();
+		editor.focus();
+		$("#editorLoader").remove();
+	}, 100); 
 	
-	$("#editorLoader").remove();
+	//setNavigateAway();
 });
 
 
@@ -121,11 +127,6 @@ function loadContract() {
 
 
 function setEditor() {
-	// show
-	$("#editor").show();
-	$("#editor").focus();
-	editor.focus();
-	
 	
 	// Anon
 	if(isUserAnon()) { 
@@ -149,6 +150,7 @@ function setEditor() {
 	
 	// selected code
 	editor.getSession().selection.on('changeSelection', function(e) {
+		console.log('test');
 	});
 	
 	
