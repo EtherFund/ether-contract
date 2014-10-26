@@ -6,17 +6,6 @@
 */
 
 
-// themes
-const EDITOR_THEMES = ["ambiance","chaos","chrome","clouds","clouds_midnight","cobalt","crimson_editor","dawn","dreamweaver","eclipse","github","idle_fingers","katzenmilch","kr_theme","kuroir","merbivore","merbivore_soft","mono_industrial","monokai","pastel_on_dark","solarized_dark","solarized_light","terminal","textmate","tomorrow","tomorrow_night","tomorrow_night_blue","tomorrow_night_bright","tomorrow_night_eighties","twilight","vibrant_ink","xcode"];
-
-const EDITOR_DEFAULT = {"theme":"idle_fingers", "fontSize":"12", "tabSize":"4", "softTabs":1, "wrapMode":1, "highlightActiveLine":1, "showPrintMargin":0};
-
-const ICON_STATES = {
-	'default':{'icon':"file-o",'color':""},
-	'typing':{'icon':"file-text-o",'color':""},
-	'error':{'icon':"file-o",'color':""},
-};
-
 // from backend
 var gObj = null; // contract
 var gState = null; // contract state : new,edit,view,etc
@@ -24,7 +13,6 @@ var gPref = null; // user preferences
 
 // ace editor
 var editor = null;
-
 
 
 
@@ -150,7 +138,7 @@ function setEditor() {
 	
 	// selected code
 	editor.getSession().selection.on('changeSelection', function(e) {
-		console.log('test');
+		//console.log('test');
 	});
 	
 	
@@ -455,7 +443,7 @@ $("#savePrefBtn").click(function(e) {
 	gPref.fontSize = modal.find("#fontSize").val();
 	gPref.tabSize = modal.find("#tabSize").val();
 	
-	// checkboxes..
+	// checkboxes.
 	gPref.softTabs = modal.find("#softTabs").is(':checked') ? "1" : "0";
 	gPref.wrapMode = modal.find("#wrapMode").is(':checked') ? "1" : "0";
 	gPref.highlightActiveLine = modal.find("#highlightActiveLine").is(':checked') ? "1" : "0";
@@ -465,23 +453,23 @@ $("#savePrefBtn").click(function(e) {
 	if(isUserAnon()) { 
 		modal.modal('hide');
 		setPreferences();
+		
+		// todo: total-storage.js
+		
 		etherGrowl("Saved editor preferences temporarily", "success", 'fa-save', function() {
 			etherGrowl("<a href='/user/login/'>Log-in or Register</a> to save permanently", "info", 'fa-cog');
 		});
 		return;
 	}
 	
-	// todo: cookie alternative to backend?
-	
-	// save for users
+	// save for logged-in users
 	etherPost("/contract/userpref", gPref, function(data) {
-		//todo: if('error' in data) {
-		
 		modal.modal('hide');
 		setPreferences();
 		etherGrowl("Saved Editor Preferences", "success", 'fa-save');
 		
 	}, function(data) {
+		//todo: if('error' in data) { }
 		console.log('Error:'); console.log(data);
 		modal.modal('hide');
 		etherGrowl("Error saving editor preferences", "danger", 'fa-warning');
