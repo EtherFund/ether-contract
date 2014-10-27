@@ -15,7 +15,6 @@ var gPref = null; // user preferences
 var editor = null;
 
 
-
 // Init
 $(function () {
 	$("#push").remove();
@@ -373,7 +372,6 @@ $("#saveMetaBtn").click(function(e) {
 	gObj.code = editor.getValue();
 	gObj.linecount = editor.session.getLength();
 	
-	
 	etherPost("/contract/save", gObj, function(data) {
 		$("h1 #contractName").text(gObj.name);
 		$("#contractTabContent #contractDesc").text(gObj.desc);
@@ -429,7 +427,7 @@ $("#prefBtn").click(function(e) {
 		var theme = $(this).data('id');
 		modal.find("#btnTheme").html(theme+" <span class='caret'></span>");
 		modal.find("#btnTheme").val(theme);
-		// note: cant change theme dynamically while in modal
+		// note: cant change theme dynamically while in modal?
 	});
 });
 
