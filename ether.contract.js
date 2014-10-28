@@ -310,6 +310,22 @@ function starContract() {
 
 
 
+// Share Button
+$("#shareBtn").click(function(e) {
+	e.preventDefault();
+	shareContract();
+});
+
+function shareContract() {
+	etherGrowl("Share on <div class='sharedcount btn-group'>"+
+	"<a href='https://www.facebook.com/sharer/sharer.php?u="+gPageUrl+"' class='btn btn-sm facebook' target='_blank'><i class='fa fa-facebook fa-fw fa-lg'></i></a>"+
+	"<a href='https://twitter.com/intent/tweet?&related=Ether.Fund&url="+gPageUrl+"&text="+gObj.name+"' class='btn btn-sm twitter' target='_blank'><i class='fa fa-twitter fa-fw fa-lg'></i></a>"+
+	"<a href='https://plus.google.com/share?url="+gPageUrl+"' class='btn btn-sm googleplus' target='_blank'><i class='fa fa-google-plus fa-lg fa-fw'></i></a>"+
+	"</div>", "info", 'fa-share-alt');
+}
+
+
+
 // All following should be angularJS!
 
 // CONTRACT DIALOG
