@@ -93,7 +93,7 @@ function loadContract() {
 	if(gObj.data) {
 		//$("#data").text();
 	} else {
-		$("#data").text("No Data module yet.");
+		$("#storage").text("No Storage module yet.");
 	}
 	
 	// Messages
@@ -506,9 +506,21 @@ function setPreferences() {
 }
 
 
+
+function contractSpin() {
+	
+}
+
 function contractGrowl() {
 	
 }
+
+
+function setIconState(state) {
+	var state = ICON_STATES[state];
+	$("#contractIcon").html("<i class='fa fa-file-text-o'></i>");
+}
+
 
 
 // Editor State
@@ -521,8 +533,8 @@ function getLineCount() {
 }
 
 
-function setIconState(state) {
-	var state = ICON_STATES[state];
-	$("#contractIcon").html("<i class='fa fa-file-text-o'></i>");
-}
+
+
+
+
 
