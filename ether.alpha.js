@@ -12,18 +12,18 @@ const ETH_UNITS = {'wei':1e-18, 'Kwei':1e-15, 'Mwei':1e-12, 'Gwei':1e-9, 'szabo'
 
 // gas costs
 const ETH_FEES = {
-    'step':{'cost':1,'desc':"Default amount of gas to pay for an execution cycle."},
+	'step':{'cost':1,'desc':"Default amount of gas to pay for an execution cycle."},
 	'stop': {'cost':0,'desc':'Nothing paid for the STOP operation.'},
-    'suicide': {'cost':0,'desc':'Nothing paid for the SUICIDE operation.'},
-    'sha3': {'cost':20,'desc':'Paid for a SHA3 operation.'},
-    'sload': {'cost':20,'desc':'Paid for a SLOAD operation.'},
-    'sstore': {'cost':100,'desc':'Paid for a normal SSTORE operation (doubled or waived sometimes).'},
-    'balance': {'cost':20,'desc':'Paid for a BALANCE operation.'},
-    'create': {'cost':100,'desc':'Paid for a CREATE operation.'},
-    'call': {'cost':20,'desc':'Paid for a CALL operation.'},
+	'suicide': {'cost':0,'desc':'Nothing paid for the SUICIDE operation.'},
+	'sha3': {'cost':20,'desc':'Paid for a SHA3 operation.'},
+	'sload': {'cost':20,'desc':'Paid for a SLOAD operation.'},
+	'sstore': {'cost':100,'desc':'Paid for a normal SSTORE operation (doubled or waived sometimes).'},
+	'balance': {'cost':20,'desc':'Paid for a BALANCE operation.'},
+	'create': {'cost':100,'desc':'Paid for a CREATE operation.'},
+	'call': {'cost':20,'desc':'Paid for a CALL operation.'},
 	'memory': {'cost':1,'desc':'Paid for every additional word when expanding memory.'},
-    'txdata': {'cost':5,'desc':'Paid for every byte of data or code for a transaction.'},
-    'transaction': {'cost':500,'desc':'Paid for every transaction.'},
+	'txdata': {'cost':5,'desc':'Paid for every byte of data or code for a transaction.'},
+	'transaction': {'cost':500,'desc':'Paid for every transaction.'},
 };
 
 // contract languages
@@ -76,6 +76,11 @@ const ICON_STATES = {
 };
 
 
+BigNumber.config({ERRORS: false}); // ignore the 15digits limit
+
+
+const ETHERFACE_KEY = '111'; // Our Etherface Key
+
 
 
 
@@ -95,8 +100,3 @@ gKeywords = ['LLL','Mutan','Serpent','Solidity','ethereum','blockchain','bank','
 	'reputation','consensus','review','crypto','block','fork','star','asset','property','code','script','mintchalk',
 	'bitcoin','nxt','blockstream','viacoin','mastercoin','dogecoin','stellar','stripe','coinbase','bitpay','chain','xapo','namecoin','altcoin',
 ];
-
-
-
-
-

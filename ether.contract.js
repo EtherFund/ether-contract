@@ -85,8 +85,9 @@ function setPrivacy() {
 
 
 function loadContract() {
+	//console.log(gObj);
 	if(gObj.code) {
-		editor.setValue(gObj.code);
+		//editor.setValue(gObj.code);
 	}
 	
 	// Data
@@ -322,6 +323,7 @@ function shareContract() {
 	"<a href='https://twitter.com/intent/tweet?&related=Ether.Fund&url="+gPageUrl+"&text="+gObj.name+"' class='btn btn-sm twitter' target='_blank'><i class='fa fa-twitter fa-fw fa-lg'></i></a>"+
 	"<a href='https://plus.google.com/share?url="+gPageUrl+"' class='btn btn-sm googleplus' target='_blank'><i class='fa fa-google-plus fa-lg fa-fw'></i></a>"+
 	"</div>", "info", 'fa-share-alt');
+	// todo: call default.js updateShare(); for click events.
 }
 
 
@@ -457,7 +459,7 @@ $("#savePrefBtn").click(function(e) {
 	gPref.fontSize = modal.find("#fontSize").val();
 	gPref.tabSize = modal.find("#tabSize").val();
 	
-	// checkboxes.
+	// checkboxes
 	gPref.softTabs = modal.find("#softTabs").is(':checked') ? "1" : "0";
 	gPref.wrapMode = modal.find("#wrapMode").is(':checked') ? "1" : "0";
 	gPref.highlightActiveLine = modal.find("#highlightActiveLine").is(':checked') ? "1" : "0";
@@ -507,8 +509,8 @@ function setPreferences() {
 
 
 
-function contractSpin() {
-	
+function contractSpin(state) {
+	// before growls
 }
 
 function contractGrowl() {

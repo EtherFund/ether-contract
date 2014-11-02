@@ -6,8 +6,6 @@
 */
 
 
-BigNumber.config({ERRORS: false}); // ignore the 15digits limit
-
 
 function getBTCprice(func) {
 	$.get('/api/btc_price', function(data) {
