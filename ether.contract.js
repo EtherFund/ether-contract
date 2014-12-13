@@ -32,16 +32,19 @@ $(function () {
 	loadContract();
 	
 	loadParameters(); // hash
-		
+	
 	setEditor();
 	
 	setTimeout(function () {
 		//editor.resize(true);
-		$("#editor").show();
+		$("#editor").show(0, function() {
+		});
+		
 		$("#editor").focus();
 		editor.focus();
 		$("#editorLoader").remove();
-	}, 100); 
+		
+	}, 100);
 	
 	//setNavigateAway();
 });
@@ -59,7 +62,7 @@ function setLanguage() {
 	$("#language").attr('title', language.desc);
 	
 	// first line of the panel on the right
-	$('#contractType >').tooltip('destroy');
+	$("#contractType >").tooltip('destroy');
 	$("#contractType >").tooltip({placement:'top'});
 	
 	// first tag: language label
@@ -323,12 +326,12 @@ function shareContract() {
 	"<a href='https://twitter.com/intent/tweet?&related=Ether.Fund&url="+gPageUrl+"&text="+gObj.name+"' class='btn btn-sm twitter' target='_blank'><i class='fa fa-twitter fa-fw fa-lg'></i></a>"+
 	"<a href='https://plus.google.com/share?url="+gPageUrl+"' class='btn btn-sm googleplus' target='_blank'><i class='fa fa-google-plus fa-lg fa-fw'></i></a>"+
 	"</div>", "info", 'fa-share-alt');
-	// todo: call default.js updateShare(); for click events.
+	shareBtnClicks(); // click events.
 }
 
 
 
-// All following should be angularJS!
+// All following should be angularJS 2.0!
 
 // CONTRACT DIALOG
 
