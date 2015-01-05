@@ -77,12 +77,14 @@ function setLanguage() {
 // Set Privacy
 function setPrivacy() {
 	var privacy = CONTRACT_PRIVACY[gObj.privacy];
-	$("#privacyLabel").html(privacy.html);
-	$("#privacyLabel").attr('title', privacy.title);
-	$("#privacyLabel").attr('class', 'label label-'+privacy.label);
+	var privacyEl = $("#privacyLabel");
 	
-	$("#privacyLabel").tooltip('destroy');
-	$("#privacyLabel").tooltip({placement:'right'});
+	privacyEl.html(privacy.html);
+	privacyEl.attr('title', privacy.title);
+	privacyEl.attr('class', 'label label-'+privacy.label);
+	
+	privacyEl.tooltip('destroy');
+	privacyEl.tooltip({placement:'right'});
 }
 
 
@@ -120,7 +122,7 @@ function loadContract() {
 function setEditor() {
 	
 	// Anon
-	if(isUserAnon()) { 
+	if(isUserAnon()) {
 		etherGrowl("Welcome! Feel free to edit the contract", "info", 'fa-file-text-o', function() {
 			etherGrowl("But you need to <a href='/user/login/'>Log-in</a> to create one", "warning", 'fa-sign-in')
 		});
