@@ -146,7 +146,6 @@ function setEditor() {
 		//console.log('test');
 	});
 	
-	
 	// annotation changed
 	editor.getSession().on("changeAnnotation", function(){
 		var annot = editor.getSession().getAnnotations();
