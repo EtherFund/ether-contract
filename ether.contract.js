@@ -332,7 +332,7 @@ function shareContract() {
 
 
 
-// All following should be angularJS 2.0!
+// All following should be ReactJS!
 
 // CONTRACT DIALOG
 
